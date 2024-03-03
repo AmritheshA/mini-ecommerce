@@ -56,12 +56,13 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
                             return exchange.getResponse().setComplete();
                         }
                     } catch (Exception e) {
-                        log.error("Something went wrong in authorization filter");
+                        log.error("Something went wrong in authorization filter @ gateway");
                         exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                         return exchange.getResponse().setComplete();
                     }
                 }
             }
+            log.info("Filter Applied Successfully");
             return chain.filter(exchange.mutate().request(request).build());
         });
     }

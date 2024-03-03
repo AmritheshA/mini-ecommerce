@@ -1,8 +1,8 @@
 package com.microservice.authservice.authservice.Service;
 
 import com.microservice.authservice.authservice.Entity.UserEntity;
-import com.microservice.authservice.authservice.Service.JWT.JwtService;
 import com.microservice.authservice.authservice.Repository.UserRepository;
+import com.microservice.authservice.authservice.Service.JWT.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,15 +57,14 @@ public class UserServiceImp implements UserService {
 
     @Override
     public ResponseEntity<String> loginUser(String email, String password) {
-        if (isEmailExist(email)) {
-            UserEntity user = findByEmail(email);
-        } else {
+
+        if (!isEmailExist(email)) {
             return new ResponseEntity<>("Email Not Exist", HttpStatus.BAD_REQUEST);
         }
         try {
             Authentication authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(email, password));
-            final String jwtToken = "Bearer Token" + jwtService.generateToken(authentication, email);
+            final String jwtToken = "Bearer- " + jwtService.generateToken(email);
 
             return new ResponseEntity<>(jwtToken, HttpStatus.OK);
         } catch (Exception exception) {

@@ -22,6 +22,18 @@ public class RouteConfig {
                         path.path("/api/v1/auth/**")
                                 .filters(f -> f.filter(authorizationFilter.apply(new AuthorizationFilter.Config())))
                                 .uri("lb://auth-service"))
+                .route(path ->
+                        path.path("/api/v1/product/**")
+                                .filters(f -> f.filter(authorizationFilter.apply(new AuthorizationFilter.Config())))
+                                .uri("lb://product-service"))
+                .route(path ->
+                        path.path("/api/v1/admin/product/**")
+                                .filters(f -> f.filter(authorizationFilter.apply(new AuthorizationFilter.Config())))
+                                .uri("lb://product-service"))
+                .route(path ->
+                        path.path("/api/v1/cart/**")
+                                .filters(f -> f.filter(authorizationFilter.apply(new AuthorizationFilter.Config())))
+                                .uri("lb://cart-service"))
                 .build();
     }
 

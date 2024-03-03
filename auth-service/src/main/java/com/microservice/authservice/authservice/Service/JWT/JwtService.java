@@ -1,9 +1,12 @@
 package com.microservice.authservice.authservice.Service.JWT;
 
+import com.microservice.authservice.authservice.Entity.UserEntity;
+import com.microservice.authservice.authservice.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,24 @@ public class JwtService {
 
     private final String jwtSecret = "ZmFrbKapka2Y7YWprZGZqYTtsZGZrYW";
 
-    public String generateToken(Authentication authentication, String email) {
+    private final UserRepository userRepository;
+
+    @Autowired
+    public JwtService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public String generateToken(String email) {
         Date currentDate = new Date();
         Date expirationTime = new Date(currentDate.getTime() + 30 * 24 * 60 * 60 * 1000L);
-        return Jwts.builder().setSubject(email).claim("userName", authentication.getName()).setExpiration(expirationTime).signWith(SignatureAlgorithm.HS256, jwtSecret).compact();
+        UserEntity user = userRepository.findByEmail(email);
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("userId",user.getId())
+                .claim("userName", user.getUsername())
+                .claim("role",user.getRole()).setExpiration(expirationTime)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .compact();
     }
 
     public boolean validateToken(String token) {
